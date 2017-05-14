@@ -1,6 +1,6 @@
 # healthchecker
 
-One of our hobby project suffer from network connectivity problems, so we put a healthcheck service in all components. This service returns with a JSON in this format:
+One of our hobby project suffers from network connectivity problems, so we put a healthcheck service in all components. This service returns with a JSON in this format:
 
     {  
         "server":"https://node-aruba-1.balloonninja.net/HealthCheck",  
