@@ -1,3 +1,6 @@
 language: java
-script: 
- - mvn install -B -V
+sudo: true
+dist: xenial
+jdk: oraclejdk8
+script:
+ - mvn install
