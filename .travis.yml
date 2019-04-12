@@ -1,10 +1,10 @@
 language: java
 sudo: true
 dist: xenial
-jdk: oraclejdk8
+jdk: oraclejdk9
 addons:
   apt:
     packages:
-      - oracle-java8-installer
+      - oracle-java9-installer
 script:
  - mvn install
