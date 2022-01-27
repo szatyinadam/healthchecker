@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 @EnableScheduling
 public class HealthCheckService {
 
-    private static final Map<String, HashMap<String, Boolean>> previousHealthChecks = new HashMap<>();
+    private static final Map<String, Map<String, Boolean>> previousHealthChecks = new HashMap<>();
 
     @Value("${app.check.url.node-aruba-1}")
     private String urlNodeAruba1;
@@ -50,7 +50,7 @@ public class HealthCheckService {
     @Autowired
     private MailService mailService;
 
-    public static Map<String, HashMap<String, Boolean>> getPreviousHealthChecks() {
+    public static Map<String, Map<String, Boolean>> getPreviousHealthChecks() {
         return previousHealthChecks;
     }
 

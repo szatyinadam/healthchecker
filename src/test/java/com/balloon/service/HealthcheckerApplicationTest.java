@@ -1,28 +1,28 @@
 package com.balloon.service;
 
 import com.balloon.model.HealthCheckModel;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@FixMethodOrder(value = MethodSorters.NAME_ASCENDING)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class HealthcheckerApplicationTest {
+
+    public static final String REDIS = "redis";
+    public static final String MYSQL = "mysql";
 
     @Value("${app.check.url.node-aruba-1}")
     private String urlNodeAruba1;
@@ -45,21 +45,21 @@ public class HealthcheckerApplicationTest {
     @InjectMocks
     private HealthCheckService healthCheckService;
 
-    @Before
+    @BeforeEach
     public void setupMocks() {
         HealthCheckModel healthCheckModelNodeAruba1 = new HealthCheckModel();
-        HashMap<String, Boolean> checksForNodeAruba1 = new HashMap<>();
-        checksForNodeAruba1.put("redis", true);
-        checksForNodeAruba1.put("mysql", true);
+        Map<String, Boolean> checksForNodeAruba1 = new HashMap<>();
+        checksForNodeAruba1.put(REDIS, true);
+        checksForNodeAruba1.put(MYSQL, true);
         healthCheckModelNodeAruba1.setResources(checksForNodeAruba1);
         healthCheckModelNodeAruba1.setStatus(true);
 
         when(restTemplate.getForObject(urlNodeAruba1, HealthCheckModel.class)).thenReturn(healthCheckModelNodeAruba1);
 
         HealthCheckModel healthCheckModelNodeAruba2 = new HealthCheckModel();
-        HashMap<String, Boolean> checksForNodeAruba2 = new HashMap<>();
-        checksForNodeAruba2.put("redis", false);
-        checksForNodeAruba2.put("mysql", true);
+        Map<String, Boolean> checksForNodeAruba2 = new HashMap<>();
+        checksForNodeAruba2.put(REDIS, false);
+        checksForNodeAruba2.put(MYSQL, true);
         healthCheckModelNodeAruba2.setResources(checksForNodeAruba2);
         healthCheckModelNodeAruba2.setStatus(true);
 
@@ -69,10 +69,10 @@ public class HealthcheckerApplicationTest {
     @Test
     public void aCheckIfEverythingIsOK() {
         HealthCheckModel node1HealthCheck = healthCheckService.getHealthCheck(urlNodeAruba1);
-        HashMap<String, Boolean> checks = node1HealthCheck.getResources();
+        Map<String, Boolean> checks = node1HealthCheck.getResources();
         assertFalse(checks.containsValue(false));
-        assertTrue(checks.get("redis"));
-        assertTrue(checks.get("mysql"));
+        assertTrue(checks.get(REDIS));
+        assertTrue(checks.get(MYSQL));
         assertEquals(node1HealthCheck.getServer(), urlNodeAruba1);
 
         verify(mailService, never()).sendMail(any());
@@ -81,10 +81,10 @@ public class HealthcheckerApplicationTest {
     @Test
     public void bCheckIfOneValueIsFalse() {
         HealthCheckModel node2HealthCheck = healthCheckService.getHealthCheck(urlNodeAruba2);
-        HashMap<String, Boolean> checks = node2HealthCheck.getResources();
+        Map<String, Boolean> checks = node2HealthCheck.getResources();
         assertTrue(checks.containsValue(false));
-        assertFalse(checks.get("redis"));
-        assertTrue(checks.get("mysql"));
+        assertFalse(checks.get(REDIS));
+        assertTrue(checks.get(MYSQL));
         assertEquals(node2HealthCheck.getServer(), urlNodeAruba2);
 
         verify(mailService, times(1)).sendMail(any());
@@ -93,10 +93,10 @@ public class HealthcheckerApplicationTest {
     @Test
     public void dCheckIfNotNewErrorThanEmailNotSent() {
         HealthCheckModel node2HealthCheck = healthCheckService.getHealthCheck(urlNodeAruba2);
-        HashMap<String, Boolean> checks = node2HealthCheck.getResources();
+        Map<String, Boolean> checks = node2HealthCheck.getResources();
         assertTrue(checks.containsValue(false));
-        assertFalse(checks.get("redis"));
-        assertTrue(checks.get("mysql"));
+        assertFalse(checks.get(REDIS));
+        assertTrue(checks.get(MYSQL));
         assertEquals(node2HealthCheck.getServer(), urlNodeAruba2);
 
         verify(mailService, never()).sendMail(any());
@@ -104,9 +104,9 @@ public class HealthcheckerApplicationTest {
 
     @Test
     public void eCheckIfFixedThanEmailSent() {
-        HashMap<String, Boolean> checksForNodeAruba2 = new HashMap<>();
-        checksForNodeAruba2.put("redis", true);
-        checksForNodeAruba2.put("mysql", true);
+        Map<String, Boolean> checksForNodeAruba2 = new HashMap<>();
+        checksForNodeAruba2.put(REDIS, true);
+        checksForNodeAruba2.put(MYSQL, true);
         HealthCheckModel responseForNodeAruba2 = new HealthCheckModel();
         responseForNodeAruba2.setResources(checksForNodeAruba2);
         responseForNodeAruba2.setStatus(true);
@@ -114,10 +114,10 @@ public class HealthcheckerApplicationTest {
         when(restTemplate.getForObject(urlNodeAruba2, HealthCheckModel.class)).thenReturn(responseForNodeAruba2);
 
         HealthCheckModel node2HealthCheck = healthCheckService.getHealthCheck(urlNodeAruba2);
-        HashMap<String, Boolean> checks = node2HealthCheck.getResources();
+        Map<String, Boolean> checks = node2HealthCheck.getResources();
         assertFalse(checks.containsValue(false));
-        assertTrue(checks.get("redis"));
-        assertTrue(checks.get("mysql"));
+        assertTrue(checks.get(REDIS));
+        assertTrue(checks.get(MYSQL));
         assertEquals(node2HealthCheck.getServer(), urlNodeAruba2);
 
         verify(mailService, times(1)).sendMail(any());

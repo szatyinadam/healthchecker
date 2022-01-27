@@ -19,7 +19,7 @@ import java.util.Map;
 public class HealthCheckController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, HashMap<String, Boolean>>> getHealthChecks() {
+    public ResponseEntity<Map<String, Map<String, Boolean>>> getHealthChecks() {
         return new ResponseEntity<>(HealthCheckService.getPreviousHealthChecks(), HttpStatus.OK);
     }
 }
