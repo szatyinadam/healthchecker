@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,19 +46,21 @@ public class HealthcheckerApplicationTest {
 
     @BeforeEach
     public void setupMocks() {
-        HealthCheckModel healthCheckModelNodeAruba1 = new HealthCheckModel();
-        Map<String, Boolean> checksForNodeAruba1 = new HashMap<>();
-        checksForNodeAruba1.put(REDIS, true);
-        checksForNodeAruba1.put(MYSQL, true);
+        var healthCheckModelNodeAruba1 = new HealthCheckModel();
+        var checksForNodeAruba1 = Map.of(
+                REDIS, true,
+                MYSQL, true
+        );
         healthCheckModelNodeAruba1.setResources(checksForNodeAruba1);
         healthCheckModelNodeAruba1.setStatus(true);
 
         when(restTemplate.getForObject(urlNodeAruba1, HealthCheckModel.class)).thenReturn(healthCheckModelNodeAruba1);
 
         HealthCheckModel healthCheckModelNodeAruba2 = new HealthCheckModel();
-        Map<String, Boolean> checksForNodeAruba2 = new HashMap<>();
-        checksForNodeAruba2.put(REDIS, false);
-        checksForNodeAruba2.put(MYSQL, true);
+        var checksForNodeAruba2 = Map.of(
+                REDIS, false,
+                MYSQL, true
+        );
         healthCheckModelNodeAruba2.setResources(checksForNodeAruba2);
         healthCheckModelNodeAruba2.setStatus(true);
 
@@ -104,9 +105,10 @@ public class HealthcheckerApplicationTest {
 
     @Test
     public void eCheckIfFixedThanEmailSent() {
-        Map<String, Boolean> checksForNodeAruba2 = new HashMap<>();
-        checksForNodeAruba2.put(REDIS, true);
-        checksForNodeAruba2.put(MYSQL, true);
+        var checksForNodeAruba2 = Map.of(
+                REDIS, true,
+                MYSQL, true
+        );
         HealthCheckModel responseForNodeAruba2 = new HealthCheckModel();
         responseForNodeAruba2.setResources(checksForNodeAruba2);
         responseForNodeAruba2.setStatus(true);

@@ -34,7 +34,7 @@ public class MailService {
     @Async
     public void sendMail(String content) {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
-            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+            var messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom(emailFrom);
             messageHelper.setTo(emailTo);
             messageHelper.setSubject(subject);

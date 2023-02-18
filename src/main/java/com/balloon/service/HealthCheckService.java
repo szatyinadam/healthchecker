@@ -63,7 +63,7 @@ public class HealthCheckService {
     }
 
     protected HealthCheckModel getHealthCheck(String healthCheckUrl) {
-        HealthCheckModel healthCheckModel = new HealthCheckModel(healthCheckUrl);
+        var healthCheckModel = new HealthCheckModel(healthCheckUrl);
         try {
             HealthCheckModel response = restTemplate.getForObject(healthCheckUrl, HealthCheckModel.class);
             healthCheckModel.setResources(response.getResources());
@@ -95,11 +95,11 @@ public class HealthCheckService {
 
     private void sendFixAlert(HealthCheckModel healthCheckModel) {
         log.error("Fixed in healthcheck: " + healthCheckModel.toString());
-        mailService.sendMail("Successfully fixed: " + healthCheckModel.toString());
+        mailService.sendMail("Successfully fixed: " + healthCheckModel);
     }
 
     private void sendAlert(HealthCheckModel healthCheckModel) {
         log.error("Error in healthcheck: " + healthCheckModel.toString());
-        mailService.sendMail("Error occurs in: " + healthCheckModel.toString());
+        mailService.sendMail("Error occurs in: " + healthCheckModel);
     }
 }
